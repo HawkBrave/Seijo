@@ -4,6 +4,7 @@ import {
   Route
 } from "react-router-dom";
 import Nav from './components/Nav';
+import Footer from './components/Footer';
 import LoginPage from './pages/login';
 import RegisterPage from './pages/register';
 
@@ -14,16 +15,19 @@ export default function App() {
   ]
   return (
     <Router>
-      <Nav links={links} />
-      <Switch>
-        {
-          links.map(link => 
-            <Route path={link.path}>
-              {link.page}
-            </Route>
-          )
-        }
-      </Switch>
+        <Nav links={links} />
+        <main className="flex-shrink-0">
+          <Switch>
+            {
+              links.map((link, index) => 
+                <Route key={index} path={link.path}>
+                  {link.page}
+                </Route>
+              )
+            }
+          </Switch>
+        </main>
+        <Footer />
     </Router>
   );
 }
