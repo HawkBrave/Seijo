@@ -58,6 +58,9 @@ export default function Register() {
               value={password}
               onChange={({ target }) => setPassword(target.value)}
             />
+            <div id="passwordHelp" className="form-text">
+              Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+            </div>
           </div>
         </div>
         <button type="submit" className="btn btn-primary">Register</button>

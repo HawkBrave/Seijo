@@ -5,7 +5,6 @@ import {
 import styles from './css/Nav.module.css';
 
 export default function Nav({ links }) {
-  console.log(styles.header);
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-light">
       <div className="container">

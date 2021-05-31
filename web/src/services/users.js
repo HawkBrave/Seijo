@@ -1,33 +1,37 @@
-const baseUrl = '/api/users';
+const baseUrl = 'http://localhost:3000/api/users';
 
 async function getAll() {
-  const data = await fetch(baseUrl);
-  const json = await data.json();
-  return json;
+  const response = await fetch(baseUrl);
+  const data = await response.json();
+  return data;
 }
 
 async function get(id) {
-  const data = await fetch(`${baseUrl}/${id}`);
-  const json = await data.json();
-  return json;
+  const response = await fetch(`${baseUrl}/${id}`);
+  const data = await response.json();
+  return data;
 }
 
 async function post(username, email, password) {
-  const data = await fetch(baseUrl, {
+  const response = await fetch(baseUrl, {
     method: 'POST',
-    header: 'Content-Type: application/json',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify({
       username,
       email,
       password
     })
   });
-  const json = await data.json();
-  return json;
+  const data = await response.json();
+  return data;
 }
 
 const usersService = {
-  post
+  getAll,
+  get,
+  post,
 };
 
 export default usersService;
