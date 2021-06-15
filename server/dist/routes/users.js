@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const pool_1 = __importDefault(require("../db/pool"));
 const router = express_1.default.Router();
 router.get('/', (_request, response, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -36,8 +37,30 @@ router.get('/:id', (request, response, next) => __awaiter(void 0, void 0, void 0
 }));
 router.post('/', (request, response, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let { username, email, password } = request.body;
-        const { rows } = yield pool_1.default.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)", [username, email, password]);
+        const { username, email, password } = request.body;
+        const saltRounds = 10;
+        const hashedPassword = yield bcrypt_1.default.hash(password, saltRounds);
+        const { rows } = yield pool_1.default.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)", [username, email, hashedPassword]);
+        response.json(rows);
+    }
+    catch (err) {
+        next(err);
+    }
+}));
+router.delete('/:id', (request, response, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = request.params;
+        const { rows } = yield pool_1.default.query("DELETE FROM users WHERE id = $1", [id]);
+        response.json(rows);
+    }
+    catch (err) {
+        next(err);
+    }
+}));
+router.get('/:id/posts', (request, response, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = request.params;
+        const { rows } = yield pool_1.default.query("SELECT * FROM posts WHERE user_id = $1", [id]);
         response.json(rows);
     }
     catch (err) {

@@ -50,11 +50,11 @@ export default function Register() {
         </div>
         <div className="row mb-3">
           <div className="col">
-            <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
+            <label htmlFor="inputPassword" className="form-label">Password</label>
             <input 
               type="password" 
               className="form-control" 
-              id="exampleInputPassword1" 
+              id="inputPassword" 
               value={password}
               onChange={({ target }) => setPassword(target.value)}
             />

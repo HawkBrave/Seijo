@@ -13,26 +13,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const pool_1 = __importDefault(require("../db/pool"));
 const router = express_1.default.Router();
-router.get('/', (_request, response, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/', (request, response, _next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(request.body);
+    const { username, password } = request.body;
     try {
-        const { rows } = yield pool_1.default.query("SELECT * FROM posts");
-        response.json(rows);
+        const { rows } = yield pool_1.default.query("SELECT * FROM users WHERE username = $1", [username]);
+        const user = rows[0];
+        const passwordCorrect = yield bcrypt_1.default.compare(password, user['password']);
+        if (!(user && passwordCorrect)) {
+            return response.status(401).json({
+                err: 'invalid username or password'
+            });
+        }
+        const userIdentity = {
+            id: user['id'],
+            username: user['username']
+        };
+        const token = jsonwebtoken_1.default.sign(userIdentity, process.env.SECRET, { expiresIn: 60 * 60 });
+        return response.send({ token, username: user.username });
     }
     catch (err) {
-        next(err);
-    }
-}));
-router.get('/:id', (request, response, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { id } = request.params;
-        const { rows } = yield pool_1.default.query("SELECT * FROM posts WHERE id = $1", [id]);
-        response.json(rows[0]);
-    }
-    catch (err) {
-        next(err);
+        return response.status(401).json({ err });
     }
 }));
 exports.default = router;
-//# sourceMappingURL=posts.js.map
+//# sourceMappingURL=login.js.map

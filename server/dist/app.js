@@ -11,8 +11,10 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
 const index_1 = __importDefault(require("./routes/index"));
+const login_1 = __importDefault(require("./routes/login"));
 const users_1 = __importDefault(require("./routes/users"));
 const posts_1 = __importDefault(require("./routes/posts"));
+const error_1 = require("./utils/error");
 const app = express_1.default();
 app.use(cors_1.default());
 app.use(morgan_1.default('dev'));
@@ -21,11 +23,9 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use(cookie_parser_1.default());
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 app.use('/', index_1.default);
+app.use('/login', login_1.default);
 app.use('/api/users', users_1.default);
 app.use('/api/posts', posts_1.default);
-app.use((err, _request, response, _next) => {
-    console.log(err);
-    response.status(500).send("Error: " + err);
-});
+app.use(error_1.errorHandler);
 module.exports = app;
 //# sourceMappingURL=app.js.map
